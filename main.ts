@@ -7,7 +7,10 @@
 //   board.json     the ranked board: every rankable pre-token protocol
 //   data.js        the dashboard's dataset, beside the page
 //   dashboard/     the static page, copied from this repository
-//   screenshots/   the three screenshots of that page
+//   screenshots/   the three screenshots of that page, decoded from the
+//                  base64 text the repository carries (the push tooling
+//                  carries text: screenshots/*.png.b64 decodes to the PNG
+//                  of the same name in /output/screenshots)
 //   dossier.json   the judge's summary, written by vendor/makefun-board.ts
 //
 // The program runs twice in grading and both runs must write the same bytes:
@@ -34,6 +37,25 @@ function arg(name: string, fallback: string): string {
   if (at >= 0 && at + 1 < process.argv.length) return process.argv[at + 1]!;
   const withEquals = process.argv.find((a) => a.startsWith(`--${name}=`));
   return withEquals === undefined ? fallback : withEquals.slice(name.length + 3);
+}
+
+/** Decode screenshots/*.png.b64 into /output/screenshots/*.png, refusing anything that is not a PNG. */
+function decodeScreenshots(from: string, to: string): string[] {
+  if (!existsSync(from)) return [];
+  mkdirSync(to, { recursive: true });
+  const written: string[] = [];
+  for (const name of readdirSync(from)) {
+    if (!name.endsWith('.png.b64')) continue;
+    const pngName = name.slice(0, -4);
+    if (!IMAGE_NAME.test(pngName)) fail(`screenshots/${pngName}: a name is letters, digits and . _ -, 1 to 128 characters`);
+    const bytes = Buffer.from(readFileSync(join(from, name), 'utf8').replace(/\s+/g, ''), 'base64');
+    if (bytes.length < 8 || bytes[0] !== 0x89 || bytes[1] !== 0x50 || bytes[2] !== 0x4e || bytes[3] !== 0x47) {
+      fail(`screenshots/${name}: does not decode to a PNG`);
+    }
+    writeFileSync(join(to, pngName), bytes);
+    written.push(pngName);
+  }
+  return written;
 }
 
 /** Copy one directory's regular files into `to`, skipping names that start with a dot. */
@@ -78,12 +100,9 @@ function main(): void {
   if (!dashboardFiles.includes('index.html')) fail('dashboard/ holds no index.html');
   if (!dashboardFiles.some((f) => f.endsWith('.css'))) fail('dashboard/ holds no .css file');
   if (!dashboardFiles.some((f) => f.endsWith('.js'))) fail('dashboard/ holds no .js file');
-  const shots = copyFiles(join(here, 'screenshots'), join(out, 'screenshots'));
+  const shots = decodeScreenshots(join(here, 'screenshots'), join(out, 'screenshots'));
   if (shots.length < 3) {
     fail(`screenshots/ holds ${shots.length} image${shots.length === 1 ? '' : 's'}: hand in 3, the board, a detail view and a filtered view`);
-  }
-  for (const name of shots) {
-    if (!IMAGE_NAME.test(name)) fail(`screenshots/${name}: a name is letters, digits and . _ -, 1 to 128 characters`);
   }
 
   // The dossier is written last: the scorer rebuilds it from this /output and
