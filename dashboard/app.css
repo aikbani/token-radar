@@ -122,6 +122,12 @@ tbody tr[data-selected="true"] { background: rgba(255, 180, 84, 0.1); }
 .steps b { display: inline; font-weight: 600; }
 .cost { color: var(--muted); font-size: 12px; font-family: var(--font-num); }
 
+.verdict { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); }
+.v-farm { color: var(--green); border-color: var(--green); }
+.v-thin { color: #d9a441; border-color: #d9a441; }
+.v-skip { color: var(--red); border-color: var(--red); }
+.backtest h3 { margin-top: var(--s5); }
+
 .foot { max-width: 1360px; margin: 0 auto; padding: 0 var(--s6) var(--s7); display: grid; gap: var(--s2); color: var(--muted); font-size: 13px; }
 .foot p { max-width: 90ch; }
 

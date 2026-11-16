@@ -15,7 +15,8 @@
 </main>
 <noscript><p class="loading">Token Radar needs JavaScript: the whole board is rendered in your browser from the data file beside this page, with no network.</p></noscript>
 <footer class="foot">
-<p>Implied value is a model built from the snapshot's own figures &mdash; TVL, seven-day growth, age with no token, and the market-cap-to-TVL multiples of each category's live-token protocols. It is the entry's own claim, never a price, and never a prediction that a token is issued.</p>
+<p>Implied value is a model built from the snapshot's own figures — TVL, and the size curve fitted on the market-cap-to-TVL relation of the live-token protocols. Seven-day growth and age with no token are shown for context only: both were tested as predictors on blind splits and dropped, so neither prices a row. It is the entry's own claim, never a price, and never a prediction that a token is issued.</p>
+<p>The size curve was tested blind: fitted on live tokens listed before 2024, it predicts the held-out tokens with a median error of 0.89 in log terms, against 1.64 for the retired constant-multiple model on the same tokens. Farm plans are netted to the dollar at a stated assumption of 15,000 farmers sharing a 5% community allocation; the net moves with that count, and the board shows the verdicts at 10,000, 25,000 and 50,000 farmers too.</p>
 <p>A protocol records no token when its DefiLlama record carries none; that is the record, not proof it has none.</p>
 </footer>
 <script src="../data.js"></script>
